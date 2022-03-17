@@ -183,14 +183,12 @@ def export_pgp(pgp_type, pgp_value):
     return obj
 
 # TODO: add tags
-# We abuse the instant_message MISP object to avoid breaking the logic
 def export_username(username_type, username_value):
     # pdb.set_trace()
-    obj = MISPObject('instant-message')
+    obj = MISPObject('person')
     l_obj_attr = []
-    l_obj_attr.append( obj.add_attribute('from-name', value=username_value))
-    l_obj_attr.append( obj.add_attribute('to-name', value=username_value))
-    l_obj_attr.append( obj.add_attribute('app-used', value='Jabber'))
+    l_obj_attr.append( obj.add_attribute('handle', value=username_value))
+    l_obj_attr.append( obj.add_attribute('instant-messaging-used', value='Jabber'))
     return obj
 
 
