@@ -6,6 +6,7 @@ import io
 import sys
 import uuid
 import redis
+import pdb
 
 sys.path.append(os.path.join(os.environ['AIL_BIN'], 'export'))
 sys.path.append(os.path.join(os.environ['AIL_BIN'], 'lib'))
@@ -181,6 +182,17 @@ def export_pgp(pgp_type, pgp_value):
         l_obj_attr.append( obj.add_attribute('user-id-email', value=pgp_value) )
     return obj
 
+# TODO: add tags
+# We abuse the instant_message MISP object to avoid breaking the logic
+def export_username(username_type, username_value):
+    # pdb.set_trace()
+    obj = MISPObject('instant-message')
+    l_obj_attr = []
+    l_obj_attr.append( obj.add_attribute('from-name', value=username_value))
+    l_obj_attr.append( obj.add_attribute('to-name', value=username_value))
+    l_obj_attr.append( obj.add_attribute('app-used', value='Jabber'))
+    return obj
+
 
 # filter objects to export, export only object who correlect which each other
 def filter_obj_linked(l_obj):
@@ -214,7 +226,7 @@ def add_obj_to_create_by_lvl(all_obj_to_export, set_relationship, dict_obj, lvl)
         obj_correlations = Correlate_object.get_object_correlation(dict_obj['type'], dict_obj['id'], requested_correl_type=dict_obj.get('subtype', None))
         for obj_type in obj_correlations:
             dict_new_obj = {'type': obj_type}
-            if obj_type=='pgp' or obj_type=='cryptocurrency':
+            if obj_type=='pgp' or obj_type=='cryptocurrency' or obj_type=='username':
                 for subtype in obj_correlations[obj_type]:
                     dict_new_obj['subtype'] = subtype
                     for obj_id in obj_correlations[obj_type][subtype]:
@@ -285,6 +297,9 @@ def create_misp_obj(obj_type, obj_id):
         return export_pgp(obj_subtype, obj_id)
     elif obj_type == 'domain':
         return export_domain(obj_id)
+    elif obj_type == 'username':
+        obj_subtype, obj_id = obj_id.split(':', 1)
+        return export_username(obj_subtype, obj_id)
 
 def get_relationship_between_global_obj(obj_global_id_1, obj_global_id_2):
     obj_type_1 = obj_global_id_1.split(':', 1)[0]
