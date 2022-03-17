@@ -189,6 +189,11 @@ def export_username(username_type, username_value):
     l_obj_attr = []
     l_obj_attr.append( obj.add_attribute('handle', value=username_value))
     l_obj_attr.append( obj.add_attribute('instant-messaging-used', value='Jabber'))
+
+    # TODOOOO
+    # compute first-seen / last-seen
+    # correlations = Correlate_object.get_object_correlation('username', username_value)
+
     return obj
 
 
