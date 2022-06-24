@@ -38,7 +38,7 @@ scrapy>2.0.0
 scrapy-splash>=0.7.2
 
 # Languages
-pycld3>0.20
+gcld3>=3.0.13
 
 #Graph
 numpy>1.18.1

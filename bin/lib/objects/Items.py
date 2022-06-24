@@ -6,7 +6,7 @@ import os
 import re
 import sys
 import redis
-import cld3
+import gcld3
 import html2text
 
 from io import BytesIO
@@ -280,14 +280,14 @@ def get_item_languages(item_id, min_len=600, num_langs=3, min_proportion=0.2, mi
     # REMOVE USELESS SPACE
     content = ' '.join(content.split())
     #- CLEAN CONTENT -#
-
-    #print(content)
-    #print(len(content))
     if len(content) >= min_len:
-        for lang in cld3.get_frequent_languages(content, num_langs=num_langs):
-            if lang.proportion >= min_proportion and lang.probability >= min_probability and lang.is_reliable:
+        detector = gcld3.NNetLanguageIdentifier(min_num_bytes=0, max_num_bytes=1000)
+        for lang in detector.FindTopNMostFreqLangs(text=content, num_langs=num_langs):
+           if lang.proportion >= min_proportion and lang.probability >= min_probability and lang.is_reliable:
                 all_languages.append(lang)
     return all_languages
+
+
 
 # API
 def get_item(request_dict):
