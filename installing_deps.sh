@@ -46,7 +46,7 @@ git submodule update --init
 test ! -d yara/ && git clone https://github.com/ail-project/yara.git
 pushd yara/
 git checkout androfleur
-./boostrap.sh
+./bootstrap.sh
 ./configure --enable-cuckoo
 make
 make install
