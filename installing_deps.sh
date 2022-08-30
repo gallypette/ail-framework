@@ -9,7 +9,7 @@ set -e
 sudo apt-get update
 
 sudo apt-get install python3-pip virtualenv python3-dev python3-tk libfreetype6-dev \
-    screen g++ python-tk unzip libsnappy-dev cmake -qq
+    screen g++ python-tk unzip libsnappy-dev cmake libjansson-dev -qq
 
 #Needed for downloading jemalloc
 sudo apt-get install wget -qq
