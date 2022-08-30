@@ -42,6 +42,16 @@ sudo apt-get install p7zip-full -qq
 # SUBMODULES #
 git submodule update --init
 
+# YARA #
+test ! -d yara/ && git clone https://github.com/ail-project/yara.git
+pushd yara/
+git checkout androfleur
+./boostrap.sh
+./configure --enable-cuckoo
+make
+make install
+popd
+
 # REDIS #
 test ! -d redis/ && git clone https://github.com/antirez/redis.git
 pushd redis/

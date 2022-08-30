@@ -43,6 +43,12 @@ python3 -m nltk.downloader vader_lexicon
 python3 -m nltk.downloader punkt
 popd
 
+# YARA python #
+test ! -d yara-python/ && git clone https://github.com/VirusTotal/yara-python
+pushd yara-python/
+python setup.py build --dynamic-linking
+popd
+
 pushd ${AIL_FLASK}
 ./update_thirdparty.sh
 popd
