@@ -44,9 +44,10 @@ python3 -m nltk.downloader punkt
 popd
 
 # YARA python #
-test ! -d yara-python/ && git clone https://github.com/VirusTotal/yara-python
+test ! -d yara-python/ && git clone --recursive https://github.com/VirusTotal/yara-python
 pushd yara-python/
-python setup.py build --dynamic-linking
+python3 setup.py build --dynamic-linking
+python setup.py install
 popd
 
 pushd ${AIL_FLASK}
