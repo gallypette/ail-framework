@@ -12,6 +12,7 @@ import re
 import sys
 import time
 import yara
+import json
 import requests
 
 sys.path.append(os.environ['AIL_BIN'])
@@ -56,15 +57,29 @@ class Tracker_Yara(AbstractModule):
             print('Tracked set refreshed')
 
         self.item = Item(item_id)
+
         item_content = self.item.get_content()
-        try:
-            yara_match = self.rules.match(data=item_content, callback=self.yara_rules_match, which_callbacks=yara.CALLBACK_MATCHES, timeout=60)
-            if yara_match:
-                self.redis_logger.info(f'{self.item.get_id()}: {yara_match}')
-                print(f'{self.item.get_id()}: {yara_match}')
-        except yara.TimeoutError as e:
-            print(f'{self.item.get_id()}: yara scanning timed out')
-            self.redis_logger.info(f'{self.item.get_id()}: yara scanning timed out')
+        # steer on the source - we only work on the androguard report for the time being
+        item_source = self.item.get_source()
+        if item_source == "apk-feeder":
+            try:
+                yara_match = self.rules.match(data="", callback=self.yara_rules_match, which_callbacks=yara.CALLBACK_MATCHES, timeout=60, modules_data={'androguard': item_content.encode('utf-8')})
+                if yara_match:
+                    self.redis_logger.info(f'{self.item.get_id()}: {yara_match}')
+                    print(f'{self.item.get_id()}: {yara_match}')
+            except yara.TimeoutError as e:
+                print(f'{self.item.get_id()}: yara scanning timed out')
+                self.redis_logger.info(f'{self.item.get_id()}: yara scanning timed out')
+        else:
+            try:
+                yara_match = self.rules.match(data=item_content, callback=self.yara_rules_match, which_callbacks=yara.CALLBACK_MATCHES, timeout=60)
+                if yara_match:
+                    self.redis_logger.info(f'{self.item.get_id()}: {yara_match}')
+                    print(f'{self.item.get_id()}: {yara_match}')
+            except yara.TimeoutError as e:
+                print(f'{self.item.get_id()}: yara scanning timed out')
+                self.redis_logger.info(f'{self.item.get_id()}: yara scanning timed out')
+
 
     def yara_rules_match(self, data):
         tracker_uuid = data['namespace']
